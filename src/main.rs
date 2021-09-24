@@ -7,7 +7,7 @@ use std::io;
 
 fn main() -> io::Result<()> {
     let matches = App::new("PostgreSQL booter")
-        .version("1.0.0")
+        .version("1.0.1")
         .author("Andrew Luchuk")
         .about("Boots PostgreSQL as installed by Homebrew")
         .subcommand(SubCommand::with_name("start")
