@@ -32,8 +32,8 @@ fn main() -> io::Result<()> {
 }
 
 fn run_process(argument: &str) -> io::Result<()> {
-    let args = vec![argument.clone()];
-    let process = Command::new("/home/linuxbrew/.linuxbrew/var/postgres")
+    let args = vec!["-D", "/home/linuxbrew/.linuxbrew/var/postgres", argument.clone()];
+    let process = Command::new("pg_ctl")
         .args(args)
         .spawn()?;
 
@@ -56,7 +56,7 @@ fn boot() -> io::Result<()>{
 }
 
 fn shutdown() -> io::Result<()> {
-    run_process("shutdown")?;
+    run_process("stop")?;
 
     Ok(())
 }
