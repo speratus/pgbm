@@ -14,19 +14,17 @@ fn main() -> io::Result<()> {
             .about("Starts PostgreSQL"))
         .subcommand(SubCommand::with_name("stop")
             .about("Stops PostgreSQL"))
+        .subcommand(SubCommand::with_name("u")
+            .about("Alias for \"start\" command. \"u\" stands for \"up\"."))
+        .subcommand(SubCommand::with_name("d")
+            .about("Alias for \"stop\". \"d\" stands for \"down\"."))
         .get_matches();
 
-    if let Some(_matches) = matches.subcommand_matches("start") {
-        boot()?;
-        return Ok(());
+    match matches.subcommand_name() {
+        Some("start") | Some("u") => boot()?,
+        Some("stop") | Some("d") => shutdown()?,
+        None | _ => println!("You must use either \"start\" or \"stop\" or one of their aliases."),
     }
-
-    if let Some(_matches) = matches.subcommand_matches("stop") {
-        shutdown()?;
-        return Ok(());
-    }
-
-    println!("You must use either \"start\" or \"stop\".");
 
     Ok(())
 }
