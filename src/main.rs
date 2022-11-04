@@ -7,7 +7,7 @@ use std::io;
 
 fn main() -> io::Result<()> {
     let matches = App::new("PostgreSQL booter")
-        .version("1.0.1")
+        .version("1.0.2")
         .author("Andrew Luchuk")
         .about("Boots PostgreSQL as installed by Homebrew")
         .subcommand(SubCommand::with_name("start")
@@ -30,7 +30,7 @@ fn main() -> io::Result<()> {
 }
 
 fn run_process(argument: &str) -> io::Result<()> {
-    let args = vec!["-D", "/home/linuxbrew/.linuxbrew/var/postgres", argument.clone()];
+    let args = vec!["-D", "/home/linuxbrew/.linuxbrew/var/postgresql@14", argument.clone()];
     let process = Command::new("pg_ctl")
         .args(args)
         .spawn()?;
