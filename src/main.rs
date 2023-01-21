@@ -1,5 +1,5 @@
 extern crate clap;
-use clap::{App, SubCommand};
+use clap::{App, SubCommand, arg, value_parser};
 
 use std::process::Command;
 
@@ -10,6 +10,13 @@ fn main() -> io::Result<()> {
         .version("1.0.2")
         .author("Andrew Luchuk")
         .about("Boots PostgreSQL as installed by Homebrew")
+        .ar(
+            arg!(
+                -v --version <VERSION> "Chooses which version of Postgres to boot"
+            )
+                .required(false)
+                .value_parse(value_parser!(String)),
+        )
         .subcommand(SubCommand::with_name("start")
             .about("Starts PostgreSQL"))
         .subcommand(SubCommand::with_name("stop")
@@ -20,17 +27,23 @@ fn main() -> io::Result<()> {
             .about("Alias for \"stop\". \"d\" stands for \"down\"."))
         .get_matches();
 
+    if let Some(version) = matches.get_one::<String>("version") {
+        let v = version;
+    } else {
+        let v = "14";
+    }
+
     match matches.subcommand_name() {
-        Some("start") | Some("u") => boot()?,
-        Some("stop") | Some("d") => shutdown()?,
+        Some("start") | Some("u") => boot(v)?,
+        Some("stop") | Some("d") => shutdown(v)?,
         None | _ => println!("You must use either \"start\" or \"stop\" or one of their aliases."),
     }
 
     Ok(())
 }
 
-fn run_process(argument: &str) -> io::Result<()> {
-    let args = vec!["-D", "/home/linuxbrew/.linuxbrew/var/postgresql@14", argument.clone()];
+fn run_process(argument: &str, version: &str) -> io::Result<()> {
+    let args = vec!["-D", format!("/home/linuxbrew/.linuxbrew/var/postgresql@{}", version), argument.clone()];
     let process = Command::new("pg_ctl")
         .args(args)
         .spawn()?;
@@ -47,14 +60,14 @@ fn run_process(argument: &str) -> io::Result<()> {
     Ok(())
 }
 
-fn boot() -> io::Result<()>{
-    run_process("start")?;
+fn boot(version: &str) -> io::Result<()>{
+    run_process("start", version)?;
 
     Ok(())
 }
 
-fn shutdown() -> io::Result<()> {
-    run_process("stop")?;
+fn shutdown(version: &str) -> io::Result<()> {
+    run_process("stop", version)?;
 
     Ok(())
 }
