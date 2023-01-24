@@ -10,7 +10,7 @@ fn main() -> io::Result<()> {
         .version("1.0.2")
         .author("Andrew Luchuk")
         .about("Boots PostgreSQL as installed by Homebrew")
-        .ar(
+        .arg(
             arg!(
                 -v --version <VERSION> "Chooses which version of Postgres to boot"
             )
@@ -27,10 +27,12 @@ fn main() -> io::Result<()> {
             .about("Alias for \"stop\". \"d\" stands for \"down\"."))
         .get_matches();
 
+
+    let v: &str;
     if let Some(version) = matches.get_one::<String>("version") {
-        let v = version;
+        v = version.as_str();
     } else {
-        let v = "14";
+        v = "14";
     }
 
     match matches.subcommand_name() {
@@ -43,7 +45,7 @@ fn main() -> io::Result<()> {
 }
 
 fn run_process(argument: &str, version: &str) -> io::Result<()> {
-    let args = vec!["-D", format!("/home/linuxbrew/.linuxbrew/var/postgresql@{}", version), argument.clone()];
+    let args = vec!["-D", format!("/home/linuxbrew/.linuxbrew/var/postgresql@{}", version).as_str(), argument.clone()];
     let process = Command::new("pg_ctl")
         .args(args)
         .spawn()?;
