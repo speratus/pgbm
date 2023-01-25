@@ -1,29 +1,30 @@
 extern crate clap;
-use clap::{App, SubCommand, arg, value_parser};
+use clap::{command, Command, arg, value_parser};
 
-use std::process::Command;
+use std::process;
 
 use std::io;
 
 fn main() -> io::Result<()> {
-    let matches = App::new("PostgreSQL booter")
+    let matches = command!()
         .version("1.0.2")
         .author("Andrew Luchuk")
         .about("Boots PostgreSQL as installed by Homebrew")
+        .subcommand_required(true)
         .arg(
             arg!(
-                -v --version <VERSION> "Chooses which version of Postgres to boot"
+                -p --postgres-version <VERSION> "Chooses which version of Postgres to boot"
             )
                 .required(false)
-                .value_parse(value_parser!(String)),
+                .value_parser(value_parser!(String)),
         )
-        .subcommand(SubCommand::with_name("start")
+        .subcommand(Command::new("start")
             .about("Starts PostgreSQL"))
-        .subcommand(SubCommand::with_name("stop")
+        .subcommand(Command::new("stop")
             .about("Stops PostgreSQL"))
-        .subcommand(SubCommand::with_name("u")
+        .subcommand(Command::new("u")
             .about("Alias for \"start\" command. \"u\" stands for \"up\"."))
-        .subcommand(SubCommand::with_name("d")
+        .subcommand(Command::new("d")
             .about("Alias for \"stop\". \"d\" stands for \"down\"."))
         .get_matches();
 
@@ -45,8 +46,9 @@ fn main() -> io::Result<()> {
 }
 
 fn run_process(argument: &str, version: &str) -> io::Result<()> {
-    let args = vec!["-D", format!("/home/linuxbrew/.linuxbrew/var/postgresql@{}", version).as_str(), argument.clone()];
-    let process = Command::new("pg_ctl")
+    let path = format!("/home/linuxbrew/.linuxbrew/var/postgresql@{}", version.clone());
+    let args = vec!["-D", path.as_str(), argument.clone()];
+    let process = process::Command::new("pg_ctl")
         .args(args)
         .spawn()?;
 
