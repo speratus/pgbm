@@ -1,5 +1,5 @@
 extern crate clap;
-use clap::{command, Command, arg, value_parser};
+use clap::{command, Command, arg};
 
 use std::process;
 
@@ -13,10 +13,9 @@ fn main() -> io::Result<()> {
         .subcommand_required(true)
         .arg(
             arg!(
-                -p --postgres-version <VERSION> "Chooses which version of Postgres to boot"
+                -p --"postgres-version" <VERSION> "Chooses which version of Postgres to boot"
             )
                 .required(false)
-                .value_parser(value_parser!(String)),
         )
         .subcommand(Command::new("start")
             .about("Starts PostgreSQL"))
@@ -30,7 +29,7 @@ fn main() -> io::Result<()> {
 
 
     let v: &str;
-    if let Some(version) = matches.get_one::<String>("version") {
+    if let Some(version) = matches.get_one::<String>("postgres-version") {
         v = version.as_str();
     } else {
         v = "14";
