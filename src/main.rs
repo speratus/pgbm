@@ -17,6 +17,11 @@ fn main() -> io::Result<()> {
             )
                 .required(false)
         )
+        .arg(
+            arg!(
+                -d --"data-location" <LOCATION> "Sets the directory to use for storing database files"
+            )
+        )
         .subcommand(Command::new("start")
             .about("Starts PostgreSQL"))
         .subcommand(Command::new("stop")
@@ -35,17 +40,24 @@ fn main() -> io::Result<()> {
         v = "14";
     }
 
+    let l: &str;
+    if let Some(location) = matches.get_one::<String>("data-location") {
+        l = location.as_str();
+    } else {
+        l = "/home/linuxbrew/.linuxbrew/var/postgresql";
+    }
+
     match matches.subcommand_name() {
-        Some("start") | Some("u") => boot(v)?,
-        Some("stop") | Some("d") => shutdown(v)?,
+        Some("start") | Some("u") => boot(v, l)?,
+        Some("stop") | Some("d") => shutdown(v, l)?,
         None | _ => println!("You must use either \"start\" or \"stop\" or one of their aliases."),
     }
 
     Ok(())
 }
 
-fn run_process(argument: &str, version: &str) -> io::Result<()> {
-    let path = format!("/home/linuxbrew/.linuxbrew/var/postgresql@{}", version.clone());
+fn run_process(argument: &str, version: &str, location: &str) -> io::Result<()> {
+    let path = format!("{}@{}", location.clone(), version.clone());
     let args = vec!["-D", path.as_str(), argument.clone()];
     let process = process::Command::new("pg_ctl")
         .args(args)
@@ -63,14 +75,14 @@ fn run_process(argument: &str, version: &str) -> io::Result<()> {
     Ok(())
 }
 
-fn boot(version: &str) -> io::Result<()>{
-    run_process("start", version)?;
+fn boot(version: &str, locatinon: &str) -> io::Result<()>{
+    run_process("start", version, locatinon)?;
 
     Ok(())
 }
 
-fn shutdown(version: &str) -> io::Result<()> {
-    run_process("stop", version)?;
+fn shutdown(version: &str, location: &str) -> io::Result<()> {
+    run_process("stop", version, location)?;
 
     Ok(())
 }
