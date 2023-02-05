@@ -7,7 +7,7 @@ use std::io;
 
 fn main() -> io::Result<()> {
     let matches = command!()
-        .version("1.0.2")
+        .version("1.1.0")
         .author("Andrew Luchuk")
         .about("Boots PostgreSQL as installed by Homebrew")
         .subcommand_required(true)
