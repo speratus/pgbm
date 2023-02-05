@@ -38,3 +38,10 @@ There are a couple of easy ways to install pgm at the moment:
 
 In the future, I may decide to add this library to [crates.io](https://crates.io),
 but for the time being, these are the two best ways to get pgbm.
+
+## Optional arguments
+Version `1.1.0` introduces two optional arguments. They are as follows:
+```
+-p, --postgres-version <VERSION> Specifies the version of Postgres you wish to boot if you have multiple Linuxbrew installations
+-d, --data-location <LOCATION>   Overrides the default postgres data directory (/home/linuxbrew/.linuxbrew/var/postgresql/) with the specified location
+```
